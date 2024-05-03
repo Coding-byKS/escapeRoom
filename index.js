@@ -8,8 +8,7 @@ const delay = time => new Promise(res => setTimeout(res, time)); //Delay functio
 const backEndClues = ["front", "end"];
 const frontEndClues = ["grw", "tho", "pony", "cam"];
 let i = 0, correctCounter = 0, incorrectCounter = 0;
-let backEndComplete = false;
-//let frontEndComplete = false;
+let backEndComplete = false, frontEndComplete = false;
 
 //Score subclass and functions
 
@@ -58,55 +57,20 @@ let totalScore
 //Back End
 
 const enterBE = async () => {
-    while (correctCounter < 2 || incorrectCounter < 3) {
-        const answer = await backendRoomQuestions(i);
-        console.log(`Your answer is: ${answer}`); //Answer input is displayed
-        if (backEnd[i].answer == answer) { //Checks if it is correct
-            console.log(`You are correct! Here is your clue: ${backEndClues[correctCounter]}`); //Gives one part of the clue based on the counter
-            console.log("Please note it down for your Final Key.")
-            await delay(1500);
-
-            if (correctCounter < 1) {
-                i++; correctCounter++;
-            } else { //If second correct answer
-                backEndComplete = true;
-                correctCounter++; //Increment final correct answer for this section
-                totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
-                totalScore.showScore(); //Show score
-                console.log("Well done in the Back-end room. But as your clues say, there is no escaping the front-end, you are ready to enter the front-end room now.");
-                return "exit";
-            }
-
-        } else { //Wrong answer
-            console.log(`That is incorrect. The correct answer was ${backEnd[i].answer}.`)
-            await delay(700);
-
-            if (incorrectCounter < 2) {
-                i++, incorrectCounter++;
-                console.log("Let's try another question.");
-                await delay(1000);
-            } else {
-                console.log("Back-end doesn't seem to be your friend. You may want to try your luck in the front-end room.")
-                incorrectCounter++;
-                totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
-                totalScore.showScore(); //Show score
-                await delay(1000);
-                return "exit";
-            }
-        }
-    }
-}
-
-//Back End simple (if you choose Front End first)
-
-const enterBESimple = async () => {
     i = 0, correctCounter = 0, incorrectCounter = 0;
     while (correctCounter < 2 || incorrectCounter < 3) {
         const answer = await backendRoomQuestions(i);
         console.log(`Your answer is: ${answer}`); //Answer input is displayed
         if (backEnd[i].answer == answer) { //Checks if it is correct
-            console.log("You are correct! Here is your " + chalk.yellowBright("gold coin"));
+            if(frontEndComplete == false){ //If front end hasn't been done yet / started with back end
+                console.log(`You are correct! Here is a ${chalk.yellowBright("gold coin")} and a clue: ${backEndClues[correctCounter]}`); //Gives one part of the clue based on the counter
+                console.log("Please note it down for your Final Key.")
+            }
+            else{ //If front end has been done first
+                console.log("You are correct! Here is your " + chalk.yellowBright("gold coin"));
+            }
             await delay(1500);
+
             if (correctCounter < 1) {
                 i++; correctCounter++;
             } else { //If second correct answer
@@ -114,18 +78,30 @@ const enterBESimple = async () => {
                 correctCounter++; //Increment final correct answer for this section
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
                 totalScore.showScore(); //Show score
-                console.log("Well done in the Back-end room, you now have two gold coins. You can enter your Final Key now.");
+                if(frontEndComplete == false){ //If front end hasn't been done yet / started with back end
+                    console.log("Well done in the Back-end room. But as your clues say, there is no escaping the front-end, you are ready to enter the front-end room now.");
+                }
+                else{ //If front end has been done first
+                    console.log("Well done in the Back-end room, you now have two gold coins. You can enter your Final Key now.");
+                }
                 return;
             }
+
         } else { //Wrong answer
             console.log(`That is incorrect. The correct answer was ${backEnd[i].answer}.`)
             await delay(700);
+
             if (incorrectCounter < 4) {
                 i++, incorrectCounter++;
                 console.log("Let's try another question.");
                 await delay(1000);
             } else {
-                console.log("I am sorry but you needed TWO coins to enter the Final Key! Better luck next time")
+                if(frontEndComplete == false){ //If front end hasn't been done yet / started with back end
+                    console.log("Back-end doesn't seem to be your friend. You may want to try your luck in the front-end room.")
+                }
+                else{ //If front end has been done first
+                    console.log("I am sorry but you needed TWO coins to enter the Final Key! Better luck next time.")
+                }
                 incorrectCounter++;
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
                 totalScore.showScore(); //Show score
@@ -135,6 +111,45 @@ const enterBESimple = async () => {
         }
     }
 }
+
+//Back End simple - Has been reworked into enterBE()
+
+// const enterBESimple = async () => {
+//     i = 0, correctCounter = 0, incorrectCounter = 0;
+//     while (correctCounter < 2 || incorrectCounter < 3) {
+//         const answer = await backendRoomQuestions(i);
+//         console.log(`Your answer is: ${answer}`); //Answer input is displayed
+//         if (backEnd[i].answer == answer) { //Checks if it is correct
+//             console.log("You are correct! Here is your " + chalk.yellowBright("gold coin"));
+//             await delay(1500);
+//             if (correctCounter < 1) {
+//                 i++; correctCounter++;
+//             } else { //If second correct answer
+//                 backEndComplete = true;
+//                 correctCounter++; //Increment final correct answer for this section
+//                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
+//                 totalScore.showScore(); //Show score
+//                 console.log("Well done in the Back-end room, you now have two gold coins. You can enter your Final Key now.");
+//                 return;
+//             }
+//         } else { //Wrong answer
+//             console.log(`That is incorrect. The correct answer was ${backEnd[i].answer}.`)
+//             await delay(700);
+//             if (incorrectCounter < 4) {
+//                 i++, incorrectCounter++;
+//                 console.log("Let's try another question.");
+//                 await delay(1000);
+//             } else {
+//                 console.log("I am sorry but you needed TWO coins to enter the Final Key! Better luck next time")
+//                 incorrectCounter++;
+//                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
+//                 totalScore.showScore(); //Show score
+//                 await delay(1000);
+//                 return "exit";
+//             }
+//         }
+//     }
+// }
 
 //Front End
 
@@ -147,10 +162,10 @@ const enterFE = async () => {
             await delay(700);
             console.log(`You are correct! Here is your clue: ${frontEndClues[correctCounter]}`); //Gives one part of the clue based on the counter
             await delay(700);
-            console.log("Please note it down for your Final Key.");
-            await delay(1500);
+            console.log(chalk.bold.redBright("Please note it down for your Final Key."));
+            await delay(2500);
             if (correctCounter >= 3) { //If correct answer and counter is already at 3 or more
-                //frontEndComplete = true;
+                frontEndComplete = true;
                 correctCounter++; //Increment final correct answer for this section
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
                 totalScore.showScore(); //Show score
@@ -167,11 +182,11 @@ const enterFE = async () => {
             } 
         } else { //Wrong answer
             console.log(`That is incorrect. The correct answer was ${frontEnd[i].answer}.`)
-            if (incorrectCounter + correctCounter < 5) { //If incorrect answer but answered less than 5 questions
+            if (incorrectCounter + correctCounter < 10) { //If incorrect answer but answered less than 10 questions previously
                 console.log("Let's try another question.");
                 i++, incorrectCounter++;
                 await delay(700);
-            } else { //Incorrect and has answered 5 questions already
+            } else { //Incorrect and has answered 10 questions already (last front end question)
                 console.log("You have run out of questions. Try again later!")
                 incorrectCounter++;
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
@@ -258,29 +273,65 @@ const display = async () => {
         }
 
         await delay(1500);
+
+        console.log(chalk. bold.italic.blackBright.bgYellowBright("There is only one rule in this Escape Room. Try to crack enough coding questions to collect all the necessary clues for your Final Key, which will get you out. Best of Luck!"));
+        await delay(3500);
         const choice = await chooseRoom(); //Ask user which room they want to start with
         if (choice == "Front End") { //If the choice is front-end...
             const fe = await enterFE(); //Enter front-end
             if (fe == "exit") {
                 return;
             } else {
-                const beSimple = await enterBESimple();
-                if (beSimple == "exit") {
+                // [ Previous ]
+
+                // const beSimple = await enterBESimple();
+                // if (beSimple == "exit") {
+                //     return;
+                // } else {
+                //     const fk = await getFinalKey(); //Final key
+                // }
+
+                // [ Reworked ]
+
+                const be = await enterBE(); //Enter back-end
+                if (be == "exit") {
                     return;
                 } else {
                     const fk = await getFinalKey(); //Final key
                 }
+
+                // [ Reworked End ]
             }
         } else { //Back-end
-            const be = await enterBE(); //Enter back-end
+            let be = await enterBE(); //Enter back-end
             const response = await enterOtherRoom(); //After back-end is completed, ask user if they are ready to enter the front-end
             if (response == "Yes") {
                 const fe = await enterFE(); //Enter front-end
                 if (fe == "exit") {
                     return;
-                } else {
+
+                // [ Previous ]
+
+                // } else {
+                //     const fk = await getFinalKey(); //Final key
+                // }
+
+                // [ Reworked ]
+
+                } else if (backEndComplete == true) { //If back end was completed first time around
                     const fk = await getFinalKey(); //Final key
                 }
+                else{ //If it wasn't
+                    be = await enterBE(); //Enter it again
+                    if (be == "exit") { 
+                        return;
+                    } else { //If it's completed this time
+                        const fk = await getFinalKey(); //Final key
+                    }
+                }
+
+                // [ Reworked End ]
+
             } else { console.log("Sorry, you cannot move ahead then. Better luck next time!") }
         }
     } else { console.log("Cool, we will see you later!") } //Did not enter the escape room

@@ -120,7 +120,7 @@ export const checkFinalKey = async () => {
     let { userInput } = await inquirer.prompt({
         name: "userInput",
         type: "text",
-        message: "Please enter the Final Key.",
+        message: "Please enter the Final Key. Hint: add up all the clues you received in the front end room. It is an anagram for the Final Key.",
     })
     return userInput;
 }
