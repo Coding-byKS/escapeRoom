@@ -30,26 +30,26 @@ class Score extends Player { //Subclass of Player, adds variables and functions 
 
     updateScore() { //Adds the current i, correctCounter and incorrectCounter values
         //console.log(`[Values to add: ${i+1}, ${correctCounter}, ${incorrectCounter}]`) //Show what is being added, for testing - remove slashes behind console.log
-        totalScore.questionsAnswered = totalScore.questionsAnswered + (i + 1); //Add i value plus one to account for starting at index number (zero)
-        totalScore.questionsCorrect = totalScore.questionsCorrect + (correctCounter); //Add correctCounter value
-        totalScore.questionsIncorrect = totalScore.questionsIncorrect + incorrectCounter; //Add incorrectCounter value
+        this.questionsAnswered = this.questionsAnswered + (i + 1); //Add i value plus one to account for starting at index number (zero)
+        this.questionsCorrect = this.questionsCorrect + (correctCounter); //Add correctCounter value
+        this.questionsIncorrect = this.questionsIncorrect + incorrectCounter; //Add incorrectCounter value
         return this;
     }
 
     updateScoreFinalCorrect() { //Final update on winning the game
-        totalScore.questionsAnswered++; //Increment answered
-        totalScore.questionsCorrect++; //Increment correct
+        this.questionsAnswered++; //Increment answered
+        this.questionsCorrect++; //Increment correct
         return this;
     }
 
     updateScoreFinalLoss() { //Final update on losing the game
-        totalScore.questionsAnswered++; //Increment answered
-        totalScore.questionsIncorrect++; //Increment incorrect
+        this.questionsAnswered++; //Increment answered
+        this.questionsIncorrect++; //Increment incorrect
         return this;
     }
 
     showScore() { //Show the player's score
-        console.log(`${totalScore.PName}'s Score - Answered: ${totalScore.questionsAnswered}, Correct: ${totalScore.questionsCorrect}, Incorrect: ${totalScore.questionsIncorrect}`);
+        console.log(`${this.PName}'s Score - Answered: ${this.questionsAnswered}, Correct: ${this.questionsCorrect}, Incorrect: ${this.questionsIncorrect}`);
         return this;
     }
 }
