@@ -4,6 +4,8 @@ import chalk from 'chalk';
 import { start, superHero, chooseRoom, enterOtherRoom, frontEnd, backEnd } from './functions/inq.js';
 import { backendRoomQuestions, frontendRoomQuestions, startFinalKey, checkFinalKey } from './functions/inq.js';
 
+
+
 const delay = time => new Promise(res => setTimeout(res, time)); //Delay function
 const backEndClues = ["front", "end"];
 const frontEndClues = ["grw", "tho", "pony", "cam"];
@@ -26,27 +28,27 @@ class Score extends Player { //Subclass of Player, adds variables and functions 
         this.questionsIncorrect = questionsIncorrect
     }
 
-    updateScore() {
+    updateScore() { //Adds the current i, correctCounter and incorrectCounter values
         //console.log(`[Values to add: ${i+1}, ${correctCounter}, ${incorrectCounter}]`) //Show what is being added, for testing - remove slashes behind console.log
-        totalScore.questionsAnswered = totalScore.questionsAnswered + (i + 1); //Add i value and one to account for starting at index number (zero)
+        totalScore.questionsAnswered = totalScore.questionsAnswered + (i + 1); //Add i value plus one to account for starting at index number (zero)
         totalScore.questionsCorrect = totalScore.questionsCorrect + (correctCounter); //Add correctCounter value
         totalScore.questionsIncorrect = totalScore.questionsIncorrect + incorrectCounter; //Add incorrectCounter value
         return this;
     }
 
-    updateScoreFinalCorrect() {
+    updateScoreFinalCorrect() { //Final update on winning the game
         totalScore.questionsAnswered++; //Increment answered
         totalScore.questionsCorrect++; //Increment correct
         return this;
     }
 
-    updateScoreFinalLoss() {
+    updateScoreFinalLoss() { //Final update on losing the game
         totalScore.questionsAnswered++; //Increment answered
         totalScore.questionsIncorrect++; //Increment incorrect
         return this;
     }
 
-    showScore() {
+    showScore() { //Show the player's score
         console.log(`${totalScore.PName}'s Score - Answered: ${totalScore.questionsAnswered}, Correct: ${totalScore.questionsCorrect}, Incorrect: ${totalScore.questionsIncorrect}`);
         return this;
     }
@@ -58,7 +60,8 @@ let totalScore
 
 const enterBE = async () => {
     i = 0, correctCounter = 0, incorrectCounter = 0;
-    while (correctCounter < 2 || incorrectCounter < 3) {
+    // while (correctCounter < 2 || incorrectCounter < 3) {
+    while (correctCounter < 2) {
         const answer = await backendRoomQuestions(i);
         console.log(`Your answer is: ${answer}`); //Answer input is displayed
         if (backEnd[i].answer == answer) { //Checks if it is correct
@@ -79,10 +82,10 @@ const enterBE = async () => {
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
                 totalScore.showScore(); //Show score
                 if(frontEndComplete == false){ //If front end hasn't been done yet / started with back end
-                    console.log("Well done in the Back-end room. But as your clues say, there is no escaping the front-end, you are ready to enter the front-end room now.");
+                    console.log("Well done in the back-end room. But as your clues say, there is no escaping the front-end, you are ready to enter the front-end room now.");
                 }
                 else{ //If front end has been done first
-                    console.log("Well done in the Back-end room, you now have two gold coins. You can enter your Final Key now.");
+                    console.log("Well done in the back-end room, you now have two gold coins. You can enter your Final Key now.");
                 }
                 return;
             }
@@ -155,7 +158,8 @@ const enterBE = async () => {
 
 const enterFE = async () => {
     i = 0, correctCounter = 0, incorrectCounter = 0;
-    while (correctCounter < 4 || (correctCounter + incorrectCounter) < 6) {
+    // while (correctCounter < 4 || (correctCounter + incorrectCounter) < 6) {
+    while (correctCounter < 4) {
         const answer = await frontendRoomQuestions(i);
         console.log(`Your answer is: ${answer}`);
         if (answer == frontEnd[i].answer) { //Checks if the answer is correct
@@ -173,7 +177,7 @@ const enterFE = async () => {
                 console.log("HOORAY! You have all the clues. Looks like you can enter the Final Key here.");
                 if (backEndComplete == false) {
                     await delay(1000);
-                    console.log("But not so fast, you need to earn 2 gold coins from the Back End Room before you can do that.");
+                    console.log(chalk.bold.bgBlueBright("But not so fast, you need to earn 2 gold coins from the Back End Room before you can do that."));
                 }
                 await delay(2000);
                 return;
@@ -257,6 +261,8 @@ const getFinalKey = async () => {
 //Display - this is the function for the start of the game and calls the other functions within it
 
 const display = async () => {
+    
+    
     const response = await start(); //"Do you want to enter The Escape Room?"
     await delay(500);
     if (response == "Yes") { //Checks response
@@ -264,17 +270,17 @@ const display = async () => {
         await delay(500);
         if (nameNeeded == "Yes") { //Checks response
             const name = superheroes[Math.round(Math.random() * superheroes.length)]; //Gives a name using the imported superheroes package
-            console.log(`Hi ${name}, Welcome to the Coding Escape Room!`);
+            console.log(`Hi ${chalk.yellow(name)}, Welcome to the Coding Escape Room!`);
             totalScore = new Score(name, 0, 0, 0) //Set totalScore to new Score object
         } else {
             const name = superheroes[Math.round(Math.random() * superheroes.length)]; //Gives a name anyway
-            console.log(`Too bad, we will still give you one. Your super hero name is ${name}, Welcome to the Coding Escape Room!`);
+            console.log(`Too bad, we will still give you one. Your super hero name is ${chalk.yellow(name)}, Welcome to the Coding Escape Room!`);
             totalScore = new Score(name, 0, 0, 0) //Set totalScore to new Score object
         }
 
         await delay(1500);
 
-        console.log(chalk. bold.italic.blackBright.bgYellowBright("There is only one rule in this Escape Room. Try to crack enough coding questions to collect all the necessary clues for your Final Key, which will get you out. Best of Luck!"));
+        console.log(chalk.bold.italic.greenBright("There is only one rule in this Escape Room. Try to crack enough coding questions to collect all the necessary clues for your Final Key, which will get you out. Best of Luck!"));
         await delay(3500);
         const choice = await chooseRoom(); //Ask user which room they want to start with
         if (choice == "Front End") { //If the choice is front-end...
