@@ -68,7 +68,7 @@ const enterBE = async () => {
 
             if (correctCounter < 1) {
                 i++; correctCounter++;
-            } else {
+            } else { //If second correct answer
                 backEndComplete = true;
                 correctCounter++; //Increment final correct answer for this section
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
@@ -167,11 +167,11 @@ const enterFE = async () => {
             } 
         } else { //Wrong answer
             console.log(`That is incorrect. The correct answer was ${frontEnd[i].answer}.`)
-            if (incorrectCounter + correctCounter < 5) { //If incorrect answer but has less than 5 incorrect
+            if (incorrectCounter + correctCounter < 5) { //If incorrect answer but answered less than 5 questions
                 console.log("Let's try another question.");
                 i++, incorrectCounter++;
                 await delay(700);
-            } else { //Incorrect and has given 5 incorrect answers already
+            } else { //Incorrect and has answered 5 questions already
                 console.log("You have run out of questions. Try again later!")
                 incorrectCounter++;
                 totalScore.updateScore(); //Update score with i, correctCounter and incorrectCounter
